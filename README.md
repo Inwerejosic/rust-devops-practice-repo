@@ -96,6 +96,7 @@ Bash
 💾 Database Persistence
 
 When running via Docker, the SQLite database is stored in ./backend/db_data/. This is mapped to a Docker volume, meaning your data will persist even if you stop or remove your containers.
+
 📝 License
 
 This project is open-source and available under the MIT License.
