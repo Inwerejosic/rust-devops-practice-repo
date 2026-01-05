@@ -1,5 +1,3 @@
-Love it — this is exactly where a README starts *selling* the project instead of just describing it.
-Below is a **GitHub-style, marketing-polished README** with **badges**, clear value statements, and a confident open-source tone — while staying 100% consistent with what you already built.
 
 ---
 
