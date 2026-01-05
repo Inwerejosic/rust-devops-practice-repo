@@ -1,0 +1,23 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "7070:7070"
+    volumes:
+      # Persist your SQLite DB file
+      - ./backend/db_data:/app/db_data
+    environment:
+      # Ensure your Rust app looks for the DB in the volume path
+      - DATABASE_URL=/app/db_data/test.db
+    restart: always
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  db_data:

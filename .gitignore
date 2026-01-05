@@ -1,0 +1,24 @@
+# --- Rust / Cargo ---
+/backend/target/
+**/*.rs.bk
+/backend/.env
+
+# --- Node / Vue ---
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.env*
+/frontend/.eslintcache
+
+# --- SQLite & Local Data ---
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+/backend/db_data/
+
+# --- Operating System / IDE ---
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.log
