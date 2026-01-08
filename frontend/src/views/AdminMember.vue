@@ -30,7 +30,8 @@
                                 @click="removeMember(m.id)"
                                 class="btn btn-outline-danger btn-sm"
                             >
-                                Delete
+                                Delete #Doing the real work is tasking but worth
+                                it all!
                             </button>
                         </td>
                     </tr>

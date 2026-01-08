@@ -1,79 +1,96 @@
 <template>
-  <div class="view-container">
-    <div class="card sidebar-layout">
-      <div class="payment-form">
-        <h3>Record Payment</h3>
-        <form @submit.prevent="submitPayment">
-          <label>Member</label>
-          <select v-model="form.member_id" @change="fetchHistory" required>
-            <option value="" disabled>Select member...</option>
-            <option v-for="m in members" :key="m.id" :value="m.id">{{ m.f_name }} {{ m.l_name }}</option>
-          </select>
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+            <h4 class="fw-bold mb-4 text-success">Record New Payment</h4>
+            <form @submit.prevent="submitPayment">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Select Member</label>
+                        <select
+                            v-model="payment.member_id"
+                            class="form-select"
+                            required
+                        >
+                            <option value="" disabled>
+                                Choose a member...
+                            </option>
+                            <option
+                                v-for="m in members"
+                                :key="m.id"
+                                :value="m.id"
+                            >
+                                {{ m.f_name }} {{ m.l_name }} (#{{ m.id }})
+                            </option>
+                        </select>
+                    </div>
 
-          <label>Amount ($)</label>
-          <input type="number" v-model.number="form.amount_paid" step="0.01" required />
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Month/Year</label>
+                        <input
+                            v-model="payment.month_period"
+                            type="month"
+                            class="form-control"
+                            required
+                        />
+                    </div>
 
-          <label>Month</label>
-          <input type="month" v-model="form.month_period" required />
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold"
+                            >Amount Paid ($)</label
+                        >
+                        <input
+                            v-model.number="payment.amount_paid"
+                            type="number"
+                            class="form-control"
+                            step="0.01"
+                            required
+                        />
+                    </div>
+                </div>
 
-          <button type="submit" class="btn-save">Submit Payment</button>
-        </form>
-      </div>
-
-      <div class="history-table">
-        <h3>Payment History</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Amount</th>
-              <th>Month</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="c in contributions" :key="c.id">
-              <td>${{ c.amount_paid }}</td>
-              <td>{{ c.month_period }}</td>
-              <td>{{ new Date(c.created_at).toLocaleDateString() }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                <div class="mt-4">
+                    <button
+                        class="btn btn-success px-5 fw-bold"
+                        :disabled="submitting"
+                    >
+                        {{ submitting ? "Processing..." : "Confirm Payment" }}
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { ref, onMounted, reactive } from "vue";
+import axios from "axios";
 
-const API_URL = 'http://localhost:7070';
 const members = ref([]);
-const contributions = ref([]);
-const form = ref({ member_id: '', amount_paid: 0, month_period: '' });
+const submitting = ref(false);
+const payment = reactive({
+    member_id: "",
+    amount_paid: 0,
+    month_period: "",
+});
 
 const fetchMembers = async () => {
-  const res = await axios.get(`${API_URL}/members`);
-  members.value = res.data;
-};
-
-const fetchHistory = async () => {
-  if (!form.value.member_id) return;
-  const res = await axios.get(`${API_URL}/contributions/${form.value.member_id}`);
-  contributions.value = res.data;
+    const res = await axios.get("http://localhost:7070/members");
+    members.value = res.data;
 };
 
 const submitPayment = async () => {
-  await axios.post(`${API_URL}/contribute`, form.value);
-  alert("Payment Success");
-  fetchHistory();
+    submitting.value = true;
+    try {
+        await axios.post("http://localhost:7070/contribute", payment);
+        alert("Contribution recorded!");
+        payment.member_id = "";
+        payment.amount_paid = 0;
+    } catch (e) {
+        alert("Error recording payment");
+    } finally {
+        submitting.value = false;
+    }
 };
 
 onMounted(fetchMembers);
 </script>
-
-<style scoped>
-.sidebar-layout { display: grid; grid-template-columns: 300px 1fr; gap: 30px; }
-select, input { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #ddd; }
-.btn-save { background: #10b981; color: white; width: 100%; border: none; padding: 12px; border-radius: 6px; cursor: pointer; }
-</style>

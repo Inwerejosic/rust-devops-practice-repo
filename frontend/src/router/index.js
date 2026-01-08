@@ -5,6 +5,8 @@ import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import UserDashboard from "../views/UserDashboard.vue";
 import AdminPanel from "../views/AdminPanel.vue";
+import AdminSettings from "../views/AdminSettings.vue";
+import ContributionManager from "../views/ContributionManager.vue";
 
 const routes = [
   { path: "/", component: Home },
@@ -19,6 +21,16 @@ const routes = [
     path: "/admin",
     component: AdminPanel,
     meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/admin/settings",
+    component: AdminSettings,
+    meta: { requiresAdmin: true },
+  },
+  {
+    path: "/admin/contributions",
+    component: ContributionManager,
+    meta: { requiresAdmin: true },
   },
 ];
 
