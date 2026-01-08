@@ -7,7 +7,7 @@ export const useAuthStore = defineStore("auth", {
   }),
   getters: {
     isLoggedIn: (state) => !!state.token,
-    isAdmin: (state) => state.user?.email === "inwe@gmail.com", // Securely checked on backend too
+    isAdmin: (state) => state.user?.is_admin === true, // Securely checked on backend too
   },
   actions: {
     saveSession(token, userData) {
