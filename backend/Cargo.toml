@@ -20,3 +20,7 @@ chrono = { version = "0.4.42", features = ["serde"] }
 # For the Authentication Functionalities
 bcrypt = "0.15"
 jsonwebtoken = "9.3"
+
+[[bin]]
+name = "backend"
+path = "src/main.rs"

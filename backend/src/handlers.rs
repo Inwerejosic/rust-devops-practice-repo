@@ -40,6 +40,7 @@ pub async fn login(
                     token,
                     member_id: m.id,
                     f_name: m.f_name,
+                    is_admin: m.is_admin,
                 })
             } else {
                 HttpResponse::Unauthorized().body("Invalid password")
@@ -70,6 +71,7 @@ pub async fn register_member(
         password: hashed_password,
         address: new_user.address.clone(),
         age: new_user.age,
+        is_admin: new_user.is_admin,
     };
 
     // 3. Insert

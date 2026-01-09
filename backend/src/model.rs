@@ -17,6 +17,7 @@ pub struct Member {
     pub password: String,
     pub address: String,
     pub age: i32,
+    pub is_admin: bool,
 }
 
 #[derive(Insertable, Deserialize)]
@@ -29,6 +30,7 @@ pub struct NewMember {
     pub password: String,
     pub address: String,
     pub age: i32,
+    pub is_admin: bool,
 }
 
 #[derive(Deserialize, AsChangeset)]
@@ -72,16 +74,7 @@ pub struct Setting {
     pub value: String,
 }
 
-// #[derive(Serialize)]
-// pub struct AuthResponse {
-//     pub token: String,
-//     pub member_id: i32,
-//     pub f_name: String,
-// }
 
-// src/model.rs
-
-// This matches what Vue sends: { "email": "...", "password": "..." }
 #[derive(Deserialize)]
 pub struct LoginRequest {
     pub email: String,
@@ -94,6 +87,7 @@ pub struct AuthResponse {
     pub token: String,
     pub member_id: i32,
     pub f_name: String,
+    pub is_admin: bool,
 }
 
 // This is for the JWT token structure
@@ -113,4 +107,5 @@ pub struct NewMemberRequest {
     pub password: String, // This is the plain text password from the form
     pub address: String,
     pub age: i32,
+    pub is_admin: bool,
 }

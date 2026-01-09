@@ -1,67 +1,36 @@
-# # ================================
-# # Stage 1: Chef base
-# # ================================
-# FROM lukemathwalker/cargo-chef:latest-rust-alpine AS chef
-# WORKDIR /app
+# Stage 1: Build the Rust app
+FROM rust:latest AS builder
 
-# RUN apk add --no-cache \
-#     musl-dev \
-#     pkgconfig \
-#     openssl-dev
+# Set working directory
+WORKDIR /usr/src/app
 
-# # ================================
-# # Stage 2: Planner (dependency graph)
-# # ================================
-# FROM chef AS planner
-# COPY Cargo.toml Cargo.lock ./
-# COPY src ./src
-# RUN cargo chef prepare --recipe-path recipe.json
+# Docker caching
+COPY Cargo.toml Cargo.lock ./
 
-# # ================================
-# # Stage 3: Builder (cached deps + app)
-# # ================================
-# FROM chef AS builder
-# COPY --from=planner /app/recipe.json recipe.json
+# dummy src for cargo fetch caching
+RUN mkdir src && echo "fn main() {}" > src/main.rs
 
-# # Build dependencies only (cached forever unless deps change)
-# RUN cargo chef cook \
-#     --release \
-#     --target x86_64-unknown-linux-musl \
-#     --recipe-path recipe.json
+# Fetch dependencies
+RUN cargo fetch
 
-# # Build the actual binary
-# COPY Cargo.toml Cargo.lock ./
-# COPY src ./src
-# RUN cargo build \
-#     --release \
-#     --target x86_64-unknown-linux-musl \
-#     --bin backend
+# Remove dummy and copy actual source code
+RUN rm -rf src
+COPY src ./src
 
-# # Strip symbols aggressively
-# RUN strip target/x86_64-unknown-linux-musl/release/backend
-
-# # ================================
-# # Stage 4: Runtime (scratch)
-# # ================================
-# FROM scratch
-
-# WORKDIR /app
-# COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/backend /backend
-
-# EXPOSE 7070
-# ENTRYPOINT ["/backend"]
-
-
-#stage 1
-FROM rust:1.91 as builder
-WORKDIR /app
-COPY . .
+# Build in release mode
 RUN cargo build --release
 
+# Stage 2: Minimal runtime using distroless
+FROM gcr.io/distroless/cc-debian12
 
-#stage 2
-FROM debian:bookworm-slim
-WORKDIR /app
-COPY --from=builder /app/target/release/backend .
+# Set working directory for persistent data
+WORKDIR /data
+
+# Copy the built binary
+COPY --from=builder /usr/src/app/target/release/backend /usr/local/bin/backend 
+
+# Expose the app port
 EXPOSE 7070
-CMD ["./backend"]
+
+# Run the binary
+CMD ["backend"]

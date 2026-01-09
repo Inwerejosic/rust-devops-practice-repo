@@ -57,7 +57,7 @@ async fn main() -> std::io::Result<()> {
             .route("/admin/fee", web::get().to(handlers::get_monthly_fee))
             .route("/admin/fee", web::put().to(handlers::set_monthly_fee))
     })
-    .bind(("127.0.0.1", 7070))?
+    .bind(("0.0.0.0", 7070))?
     .run()
     .await
 }

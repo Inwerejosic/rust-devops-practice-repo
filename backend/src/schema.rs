@@ -20,6 +20,7 @@ diesel::table! {
         password -> Text,
         address -> Text,
         age -> Integer,
+        is_admin -> Bool,
     }
 }
 
