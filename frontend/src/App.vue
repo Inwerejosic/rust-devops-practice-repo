@@ -2,7 +2,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
         <div class="container">
             <router-link class="navbar-brand fw-bold" to="/"
-                >PORTAL</router-link
+                >GK PORTAL</router-link
             >
 
             <button
